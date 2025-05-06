@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lahore House Price Predictor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f2f6fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            margin-top: 40px;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        label {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+            background-color: #f9f9f9;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #2980b9;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1c5980;
+        }
+
+        #result {
+            margin-top: 25px;
+            font-size: 18px;
+            text-align: center;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lahore House Price Predictor</h1>
+        <form id="priceForm">
+            <label>Area Name</label>
+            <select name="area_name" required>
+                {% for area in areas %}
+                    <option value="{{ area }}">{{ area }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Area (Marla)</label>
+            <input type="number" step="0.1" name="area" required>
+
+            <label>Bedrooms</label>
+            <input type="number" name="bedrooms" required>
+
+            <label>Bathrooms</label>
+            <input type="number" name="bathrooms" required>
+
+            <label>House Type</label>
+            <select name="house_type" required>
+                {% for htype in house_types %}
+                    <option value="{{ htype }}">{{ htype }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Furnishing</label>
+            <select name="furnishing" required>
+                {% for f in furnishings %}
+                    <option value="{{ f }}">{{ f }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Year Built</label>
+            <select name="year_built" required>
+                {% for y in years %}
+                    <option value="{{ y }}">{{ y }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Predict Price</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('priceForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerHTML = `<span style="color:red;">${data.error}</span>`;
+                } else {
+                    resultDiv.innerHTML = `🏠 Predicted House Price: <strong>Rs. ${data.predicted_price.toLocaleString()}</strong>`;
+                }
+            })
+            .catch(() => {
+                resultDiv.innerHTML = `<span style="color:red;">Something went wrong</span>`;
+            });
+        });
+    </script>
+</body>
+</html>
+
