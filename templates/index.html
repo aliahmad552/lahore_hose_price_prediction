@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Lahore House Price Predictor</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -77,6 +78,9 @@
 </head>
 <body>
     <div class="container">
+        <div style="text-align:center; margin-top: 20px;">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Lahore House Price Prediction Logo" style="max-width: 150px;">
+        </div>
         <h1>Lahore House Price Predictor</h1>
         <form id="priceForm">
             <label>Area Name</label>
